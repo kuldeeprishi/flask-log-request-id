@@ -63,6 +63,7 @@ class RequestID(object):
         app.config.setdefault('LOG_REQUEST_ID_GENERATE_IF_NOT_FOUND', True)
         app.config.setdefault('LOG_REQUEST_ID_LOG_ALL_REQUESTS', False)
         app.config.setdefault('LOG_REQUEST_ID_G_OBJECT_ATTRIBUTE', 'log_request_id')
+        app.config.setdefault('FLASK_REQUEST_ID', 'X-REQUEST-ID')
 
         # Register before request callback
         @app.before_request
@@ -83,6 +84,14 @@ class RequestID(object):
         # Register after request
         if self.app.config['LOG_REQUEST_ID_LOG_ALL_REQUESTS']:
             app.after_request(self._log_http_event)
+
+        app.after_request(self._add_request_id_to_response_headers)
+
+    @staticmethod
+    def _add_request_id_to_response_headers(response):
+        header_key = current_app.config['FLASK_REQUEST_ID']
+        response.headers[header_key] = current_request_id()
+        return response
 
     @staticmethod
     def _log_http_event(response):
