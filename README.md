@@ -17,7 +17,7 @@ The easiest way to install it is using ``pip`` from PyPI
 ```bash
 pip install flask-log-request-id
 ```
-    
+
 ## Usage
 
 Flask-Log-Request-Id provides the `current_request_id()` function which can be used at any time to get the request
@@ -42,7 +42,7 @@ def hello():
 ### Example 2: Parse request id and send it to to logging
 
 In the following example, we will use the `RequestIDLogFilter` to inject the request id on all log events, and
-a custom formatter to print this information. If all these sounds unfamiliar please take a look at [python's logging 
+a custom formatter to print this information. If all these sounds unfamiliar please take a look at [python's logging
 system](https://docs.python.org/3/library/logging.html)
 
 
@@ -101,10 +101,10 @@ app = Flask()
 @celery.task()
 def generic_add(a, b):
     """Simple function to add two numbers that is not aware of the request id"""
-    
+
     logging.debug('Called generic_add({}, {}) from request_id: {}'.format(a, b, current_request_id()))
     return a + b
-    
+
 @app.route('/')
 def index():
     a, b = randint(1, 15), randint(1, 15)
@@ -112,7 +112,7 @@ def index():
     return str(generic_add.delay(a, b))  # Calling the task here, will forward the request id to the workers
 ```
 
-You can follow the same logging strategy for both web application and workers using the `RequestIDLogFilter` as shown in 
+You can follow the same logging strategy for both web application and workers using the `RequestIDLogFilter` as shown in
 example 1 and 2.
 
 ## Configuration
@@ -124,7 +124,7 @@ The following parameters can be configured through Flask's configuration system:
 | **LOG_REQUEST_ID_GENERATE_IF_NOT_FOUND**| In case the request does not hold any request id, the extension will generate one. Otherwise `current_request_id` will return None. |
 | **LOG_REQUEST_ID_LOG_ALL_REQUESTS** | If True, it will emit a log event at the request containing all the details as `werkzeug` would done along with the `request_id` . |
 | **LOG_REQUEST_ID_G_OBJECT_ATTRIBUTE** | This is the attribute of `Flask.g` object to store the current request id. Should be changed only if there is a problem. Use `current_request_id()` to fetch the current id. |
-
+| **FLASK_REQUEST_ID** | This is the header name that will be returned in response. This defaults to "X-REQUEST-ID" |
 
 ## License
 
